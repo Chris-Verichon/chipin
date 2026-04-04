@@ -65,9 +65,9 @@ export default async function DashboardPage({
             {session.user.role === "admin" && (
               <Link
                 href="/admin"
-                className="text-xs font-medium text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-semibold transition-colors hover:bg-muted"
               >
-                Admin
+                ⚙ Admin
               </Link>
             )}
             <ThemeToggle />
