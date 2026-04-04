@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
   // Verify the fundraiser exists and is active
   const { data: cagnotte, error: cagnotteError } = await supabase
     .from("cagnottes")
-    .select("id, title")
+    .select("id, title, slug")
     .eq("id", cagnotte_id)
     .eq("is_active", true)
     .single();
@@ -63,5 +63,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to create participation" }, { status: 500 });
   }
 
-  return NextResponse.json({ clientSecret: paymentIntent.client_secret });
+  return NextResponse.json({ clientSecret: paymentIntent.client_secret, slug: cagnotte.slug });
 }
