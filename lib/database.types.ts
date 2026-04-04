@@ -91,6 +91,7 @@ export type Database = {
           participant_email: string;
           amount: number;
           message: string | null;
+          is_anonymous: boolean;
           stripe_payment_intent_id: string | null;
           status: ParticipationStatus;
           created_at: string;
@@ -102,6 +103,7 @@ export type Database = {
           participant_email: string;
           amount: number;
           message?: string | null;
+          is_anonymous?: boolean;
           stripe_payment_intent_id?: string | null;
           status?: ParticipationStatus;
           created_at?: string;
@@ -113,6 +115,7 @@ export type Database = {
           participant_email?: string;
           amount?: number;
           message?: string | null;
+          is_anonymous?: boolean;
           stripe_payment_intent_id?: string | null;
           status?: ParticipationStatus;
           created_at?: string;

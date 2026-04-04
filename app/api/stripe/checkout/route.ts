@@ -6,11 +6,16 @@ import { supabase } from "@/lib/supabase";
 // Creates a Stripe PaymentIntent for a contribution, and saves a pending participation row
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { cagnotte_id, participant_name, participant_email, amount, message } = body;
+  const { cagnotte_id, participant_name, participant_email, amount, message, is_anonymous } = body;
 
-  // Basic input validation
-  if (!cagnotte_id || !participant_name || !participant_email || !amount) {
+  // email and amount are always required
+  // participant_name is only required when not anonymous
+  if (!cagnotte_id || !participant_email || !amount) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  }
+
+  if (!is_anonymous && !participant_name) {
+    return NextResponse.json({ error: "Name is required unless anonymous" }, { status: 400 });
   }
 
   const amountInCents = Math.round(parseFloat(amount) * 100);
@@ -44,12 +49,13 @@ export async function POST(req: NextRequest) {
   // Save pending participation row in Supabase
   const { error: insertError } = await supabase.from("participations").insert({
     cagnotte_id,
-    participant_name,
+    participant_name: is_anonymous ? "Anonyme" : participant_name,
     participant_email,
     amount: parseFloat(amount),
     message: message ?? null,
     stripe_payment_intent_id: paymentIntent.id,
     status: "pending",
+    is_anonymous: !!is_anonymous,
   });
 
   if (insertError) {
