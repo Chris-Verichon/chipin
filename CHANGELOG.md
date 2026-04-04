@@ -10,7 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### In Progress
-- `feature/cagnotte-public-page` — public cagnotte page + contribution form
+- `feature/dashboard-creator` — creator dashboard with stats
+
+---
+
+## [0.7.0] — Public Cagnotte Page — 2026-04-04
+
+### Added
+- `app/cagnotte/[slug]/page.tsx` — public fundraiser page: title, progress bar, participants list, contribution form
+- `app/cagnotte/[slug]/succes/page.tsx` — payment success confirmation page
+- `components/ParticipationForm.tsx` — contribution form with quick-pick amounts, anonymous checkbox, email, message
+- `app/page.tsx` — landing page with hero section and feature cards (replaces default Next.js template)
+- `app/api/stripe/checkout/route.ts` updated to return `slug` alongside `clientSecret`
+- `components/ui/checkbox.tsx` added via shadcn CLI
 
 ---
 
