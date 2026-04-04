@@ -12,7 +12,7 @@ export default function Home() {
           <span className="text-xl font-bold tracking-tight">ChipIn</span>
           <div className="flex items-center gap-3">
             <ThemeToggle />
-            <Button render={<Link href="/login" />} variant="outline" size="sm">
+            <Button render={<Link href="/login" />} nativeButton={false} variant="outline" size="sm">
               Se connecter
             </Button>
           </div>
@@ -20,7 +20,7 @@ export default function Home() {
       </header>
 
       {/* Hero */}
-      <main>
+      <main id="main-content">
         <section className="mx-auto max-w-3xl px-4 py-24 text-center space-y-6">
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight">
             Collectez facilement,<br />
@@ -31,7 +31,7 @@ export default function Home() {
             Chacun peut contribuer librement, même sans compte.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button render={<Link href="/login" />} size="lg">
+            <Button render={<Link href="/login" />} nativeButton={false} size="lg">
               Créer une cagnotte <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
