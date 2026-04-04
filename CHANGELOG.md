@@ -10,7 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### In Progress
-- `chore/ui-setup` — shadcn/ui + dark mode
+- `feature/auth-google` — Google OAuth + role-based access
+
+---
+
+## [0.3.0] — UI Setup — 2026-04-04
+
+### Added
+- `shadcn/ui` initialized with Tailwind v4 and CSS variables
+- Components installed: `button`, `card`, `input`, `label`, `dialog`, `badge`, `progress`, `sonner`, `separator`, `avatar`, `dropdown-menu`, `skeleton`
+- `components/ThemeProvider.tsx` — `next-themes` wrapper
+- `components/ThemeToggle.tsx` — sun/moon icon button for dark/light toggle
+- `app/layout.tsx` updated: `ThemeProvider`, `Toaster` (sonner), app metadata
 
 ---
 
