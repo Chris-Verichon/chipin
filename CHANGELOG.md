@@ -10,7 +10,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### In Progress
-- `chore/project-init` — Next.js 14 project setup
+- `chore/ui-setup` — shadcn/ui + dark mode
+
+---
+
+## [0.2.0] — Database Schema — 2026-04-04
+
+### Added
+- `supabase/schema.sql` — full PostgreSQL schema with RLS policies
+  - `users` table with `role` field (`admin` | `creator`)
+  - `cagnottes` table (fundraisers)
+  - `participations` table with status enum (`pending` | `paid` | `failed` | `refunded`)
+  - `cagnotte_fees` table — tracks every €4.99 creation fee
+  - Indexes on all frequent lookup columns
+- `lib/database.types.ts` — TypeScript types matching the full schema
+- `lib/supabase.ts` — server-side Supabase client (service role)
+- `lib/stripe.ts` — Stripe client with `CREATION_FEE_AMOUNT` helper
+- `COMMANDS.md` — step-by-step git command reference
 
 ---
 
