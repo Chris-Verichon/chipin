@@ -76,7 +76,7 @@ export default async function CagnotteDetailPage({ params }: Props) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-4 py-8 space-y-8">
+      <main id="main-content" className="mx-auto max-w-5xl px-4 py-8 space-y-8">
         {/* Title + actions */}
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div className="space-y-1">
@@ -128,7 +128,14 @@ export default async function CagnotteDetailPage({ params }: Props) {
               <CardContent className="pt-5">
                 <p className="text-xs text-muted-foreground uppercase tracking-wide">Progression</p>
                 <p className="text-2xl font-bold mt-1">{progressPct}&nbsp;%</p>
-                <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden mt-2">
+                <div
+                  role="progressbar"
+                  aria-valuenow={progressPct}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label={`Progression : ${progressPct} %`}
+                  className="h-1.5 w-full rounded-full bg-muted overflow-hidden mt-2"
+                >
                   <div
                     className="h-full rounded-full bg-primary transition-all"
                     style={{ width: `${progressPct}%` }}
@@ -155,14 +162,14 @@ export default async function CagnotteDetailPage({ params }: Props) {
               Aucune contribution pour l&apos;instant.
             </p>
           ) : (
-            <div className="rounded-lg border overflow-hidden">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto rounded-lg border">
+              <table className="w-full text-sm min-w-[480px]">
                 <thead className="bg-muted/50">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground">Participant</th>
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden sm:table-cell">Email</th>
-                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">Montant</th>
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Date</th>
+                    <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">Participant</th>
+                    <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground hidden sm:table-cell">Email</th>
+                    <th scope="col" className="px-4 py-3 text-right font-medium text-muted-foreground">Montant</th>
+                    <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Date</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -195,7 +202,7 @@ export default async function CagnotteDetailPage({ params }: Props) {
                           currency: "EUR",
                         })}
                       </td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground hidden md:table-cell">
+                      <td suppressHydrationWarning className="px-4 py-3 text-xs text-muted-foreground hidden md:table-cell">
                         {formatDistanceToNow(new Date(p.created_at), {
                           addSuffix: true,
                           locale: fr,
