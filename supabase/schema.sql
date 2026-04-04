@@ -33,6 +33,7 @@ CREATE TABLE participations (
   participant_email         TEXT NOT NULL,
   amount                    DECIMAL(10,2) NOT NULL CHECK (amount > 0),
   message                   TEXT,
+  is_anonymous              BOOLEAN NOT NULL DEFAULT false,
   stripe_payment_intent_id  TEXT UNIQUE,
   status                    TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'paid', 'failed', 'refunded')),
   created_at                TIMESTAMPTZ NOT NULL DEFAULT now()

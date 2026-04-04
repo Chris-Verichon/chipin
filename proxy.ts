@@ -2,7 +2,7 @@ import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
 export default withAuth(
-  function middleware(req) {
+  function proxy(req) {
     const { pathname } = req.nextUrl;
     const token = req.nextauth.token;
 
@@ -15,13 +15,13 @@ export default withAuth(
   },
   {
     callbacks: {
-      // Allow request to reach middleware function only if user is authenticated
+      // Allow request to reach proxy only if user is authenticated
       authorized: ({ token }) => !!token,
     },
   }
 );
 
-// Apply middleware to protected routes only
+// Apply proxy to protected routes only
 export const config = {
   matcher: ["/dashboard/:path*", "/admin/:path*"],
 };
