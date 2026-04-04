@@ -9,6 +9,7 @@ import CreationBanner from "@/components/CreationBanner";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +34,20 @@ export default async function DashboardPage({
     .eq("creator_id", session.user.id)
     .order("created_at", { ascending: false });
 
+  // Global stats
+  const totalRaisedCents = cagnottes?.reduce((sum, c) => sum + (c.total_raised ?? 0), 0) ?? 0;
+  const activeCount = cagnottes?.filter((c) => c.is_active).length ?? 0;
+
+  // Total paid participations across all cagnottes
+  const cagnotteIds = cagnottes?.map((c) => c.id) ?? [];
+  const { count: totalContributions } = cagnotteIds.length > 0
+    ? await supabase
+        .from("participations")
+        .select("id", { count: "exact", head: true })
+        .in("cagnotte_id", cagnotteIds)
+        .eq("status", "paid")
+    : { count: 0 };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -54,6 +69,35 @@ export default async function DashboardPage({
       <main className="mx-auto max-w-5xl px-4 py-8 space-y-8">
         {/* Creation status banner */}
         {creationStatus && <CreationBanner status={creationStatus} />}
+
+        {/* Global stats row */}
+        {cagnottes && cagnottes.length > 0 && (
+          <div className="grid grid-cols-3 gap-4">
+            <Card>
+              <CardContent className="pt-5">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">Total collecté</p>
+                <p className="text-xl font-bold mt-1">
+                  {(totalRaisedCents / 100).toLocaleString("fr-FR", {
+                    style: "currency",
+                    currency: "EUR",
+                  })}
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-5">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">Contributions</p>
+                <p className="text-xl font-bold mt-1">{totalContributions ?? 0}</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-5">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">Cagnottes actives</p>
+                <p className="text-xl font-bold mt-1">{activeCount}</p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Page title + action */}
         <div className="flex items-center justify-between">
@@ -146,12 +190,20 @@ export default async function DashboardPage({
                           locale: fr,
                         })}
                       </span>
-                      <a
-                        href={`/cagnotte/${c.slug}`}
-                        className="underline underline-offset-2 hover:text-foreground transition-colors"
-                      >
-                        Voir
-                      </a>
+                      <div className="flex items-center gap-3">
+                        <a
+                          href={`/cagnotte/${c.slug}`}
+                          className="underline underline-offset-2 hover:text-foreground transition-colors"
+                        >
+                          Voir
+                        </a>
+                        <Link
+                          href={`/dashboard/cagnotte/${c.id}`}
+                          className="underline underline-offset-2 hover:text-foreground transition-colors"
+                        >
+                          Gérer
+                        </Link>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

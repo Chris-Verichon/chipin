@@ -10,7 +10,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### In Progress
-- `feature/dashboard-creator` — creator dashboard with stats
+- `feature/admin-dashboard` — admin statistics dashboard
+
+---
+
+## [0.8.0] — Creator Dashboard — 2026-04-04
+
+### Added
+- `app/dashboard/cagnotte/[id]/page.tsx` — per-cagnotte management page: stats, full participants table (with emails), close/reopen toggle, copy public link
+- `app/api/cagnotte/[id]/toggle/route.ts` — PATCH endpoint to toggle `is_active` (owner or admin only)
+- `components/ToggleActiveButton.tsx` — client button to close/reopen a fundraiser
+- `components/CopyLinkButton.tsx` — client button to copy the public link to clipboard
+
+### Updated
+- `app/dashboard/page.tsx` — added global stats bar (total raised, total contributions, active cagnottes) + "Gérer" link per card
 
 ---
 
