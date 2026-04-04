@@ -61,6 +61,14 @@ export default async function DashboardPage({
             <span className="text-sm text-muted-foreground hidden sm:block">
               {session.user.email}
             </span>
+            {session.user.role === "admin" && (
+              <Link
+                href="/admin"
+                className="text-xs font-medium text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors"
+              >
+                Admin
+              </Link>
+            )}
             <ThemeToggle />
           </div>
         </div>
