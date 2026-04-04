@@ -1,6 +1,6 @@
 {
   "name": "chipin",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -13,6 +13,7 @@
     "@supabase/supabase-js": "^2.101.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "lucide-react": "^1.7.0",
     "nanoid": "^5.1.7",
     "next": "16.2.2",

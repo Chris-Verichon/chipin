@@ -10,7 +10,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### In Progress
-- `feature/cagnotte-creation` — creation modal + €4.99 Stripe Checkout
+- `feature/cagnotte-public-page` — public cagnotte page + contribution form
+
+---
+
+## [0.6.0] — Cagnotte Creation — 2026-04-04
+
+### Added
+- `components/CagnotteForm.tsx` — shadcn Dialog modal with title, description, goal + “Créer (4,99 €)” button
+- `components/CreationBanner.tsx` — success/cancelled banner dismisses after 5 s and clears query params
+- `app/dashboard/page.tsx` — creator dashboard listing all fundraisers with progress bars
+- `total_raised INTEGER` column added to `cagnottes` table (stores cents)
+- `increment_total_raised` PostgreSQL RPC function for atomic counter increment
+- `supabase/schema.sql` updated with new column + RPC
+- `lib/database.types.ts` updated with `total_raised` and `increment_total_raised` RPC type
+- `app/api/stripe/webhook/route.ts` updated to call RPC on `payment_intent.succeeded`
+- `date-fns` installed for relative date formatting
+- `components/ui/textarea.tsx` added via shadcn CLI
 
 ---
 
