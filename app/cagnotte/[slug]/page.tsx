@@ -27,9 +27,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!data) return { title: "Cagnotte introuvable" };
 
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
+  const description = data.description ?? "Participez à cette cagnotte sur ChipIn.";
+
   return {
     title: `${data.title} — ChipIn`,
-    description: data.description ?? "Participez à cette cagnotte sur ChipIn.",
+    description,
+    openGraph: {
+      title: `${data.title} — ChipIn`,
+      description,
+      url: `${appUrl}/cagnotte/${slug}`,
+      siteName: "ChipIn",
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: `${data.title} — ChipIn`,
+      description,
+    },
   };
 }
 
@@ -75,7 +90,7 @@ export default async function CagnottePage({ params }: Props) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl px-4 py-8 space-y-8">
+      <main id="main-content" className="mx-auto max-w-3xl px-4 py-8 space-y-8">
         {/* Title + stats */}
         <div className="space-y-3">
           <h1 className="text-3xl font-bold leading-tight">{cagnotte.title}</h1>
@@ -113,7 +128,14 @@ export default async function CagnottePage({ params }: Props) {
             </div>
 
             {progressPct !== null && (
-              <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+              <div
+                role="progressbar"
+                aria-valuenow={progressPct}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={`Progression : ${progressPct} %`}
+                className="h-2 w-full rounded-full bg-muted overflow-hidden"
+              >
                 <div
                   className="h-full rounded-full bg-primary transition-all"
                   style={{ width: `${progressPct}%` }}
@@ -160,7 +182,7 @@ export default async function CagnottePage({ params }: Props) {
                           {p.message}
                         </p>
                       )}
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <p suppressHydrationWarning className="text-xs text-muted-foreground mt-0.5">
                         {formatDistanceToNow(new Date(p.created_at), {
                           addSuffix: true,
                           locale: fr,
