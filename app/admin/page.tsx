@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { SignOutButton } from "@/components/SignOutButton";
 import AdminCharts from "@/components/AdminCharts";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -97,11 +98,12 @@ export default async function AdminDashboardPage() {
               {session.user.email}
             </span>
             <ThemeToggle />
+            <SignOutButton />
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-8 space-y-10">
+      <main id="main-content" className="mx-auto max-w-6xl px-4 py-8 space-y-10">
         <div>
           <h1 className="text-2xl font-bold">Administration</h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -159,14 +161,14 @@ export default async function AdminDashboardPage() {
         <div className="space-y-4">
           <h2 className="font-semibold text-lg">Top cagnottes</h2>
           {cagnottes && cagnottes.length > 0 ? (
-            <div className="rounded-lg border overflow-hidden">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto rounded-lg border">
+              <table className="w-full text-sm min-w-[480px]">
                 <thead className="bg-muted/50">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground">Titre</th>
-                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">Collecté</th>
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden sm:table-cell">Statut</th>
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Créée</th>
+                    <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">Titre</th>
+                    <th scope="col" className="px-4 py-3 text-right font-medium text-muted-foreground">Collecté</th>
+                    <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground hidden sm:table-cell">Statut</th>
+                    <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Créée</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -191,7 +193,7 @@ export default async function AdminDashboardPage() {
                           {c.is_active ? "Active" : "Fermée"}
                         </Badge>
                       </td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground hidden md:table-cell">
+                      <td suppressHydrationWarning className="px-4 py-3 text-xs text-muted-foreground hidden md:table-cell">
                         {formatDistanceToNow(new Date(c.created_at), {
                           addSuffix: true,
                           locale: fr,
@@ -213,14 +215,14 @@ export default async function AdminDashboardPage() {
         <div className="space-y-4">
           <h2 className="font-semibold text-lg">Derniers inscrits</h2>
           {recentUsers && recentUsers.length > 0 ? (
-            <div className="rounded-lg border overflow-hidden">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto rounded-lg border">
+              <table className="w-full text-sm min-w-[420px]">
                 <thead className="bg-muted/50">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground">Email</th>
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden sm:table-cell">Nom</th>
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground">Rôle</th>
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Inscription</th>
+                    <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">Email</th>
+                    <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground hidden sm:table-cell">Nom</th>
+                    <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">Rôle</th>
+                    <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Inscription</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -238,7 +240,7 @@ export default async function AdminDashboardPage() {
                           {u.role}
                         </Badge>
                       </td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground hidden md:table-cell">
+                      <td suppressHydrationWarning className="px-4 py-3 text-xs text-muted-foreground hidden md:table-cell">
                         {formatDistanceToNow(new Date(u.created_at), {
                           addSuffix: true,
                           locale: fr,
