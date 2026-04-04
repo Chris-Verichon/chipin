@@ -10,7 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### In Progress
-- `feature/admin-dashboard` — admin statistics dashboard
+- `feature/ui-polish` — final UI polish + SEO
+
+---
+
+## [0.9.0] — Admin Dashboard — 2026-04-04
+
+### Added
+- `app/admin/page.tsx` — full admin dashboard: KPI cards (users, cagnottes, contributions, fee revenue), area chart (contributions/30 days), top fundraisers table, recent users table
+- `components/AdminCharts.tsx` — Recharts `AreaChart` with CSS variable theming (dark mode compatible)
+- `app/api/admin/users/[id]/role/route.ts` — PATCH endpoint to promote/demote users (admin only, cannot demote self)
+
+### Updated
+- `app/dashboard/page.tsx` — added "Admin" link in header (visible to admin role only)
 
 ---
 
