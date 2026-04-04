@@ -10,7 +10,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### In Progress
-- `feature/ui-polish` — final UI polish + SEO
+- `release/v1.0` — production release
+
+---
+
+## [0.10.0] — UI Polish + Accessibilité — 2026-04-04
+
+### Added
+- `components/SignOutButton.tsx` — client component with `signOut({ callbackUrl: "/" })` from next-auth/react
+- `app/not-found.tsx` — custom 404 page
+- `app/dashboard/loading.tsx` — skeleton loading state for dashboard
+- `app/cagnotte/[slug]/loading.tsx` — skeleton loading state for public fundraiser page
+- `app/admin/loading.tsx` — skeleton loading state for admin dashboard
+
+### Updated
+- `app/layout.tsx` — added skip link ("Passer au contenu principal") for keyboard navigation (WCAG 2.4.1)
+- `app/dashboard/page.tsx` — added sign out button in header; `id="main-content"` on `<main>`; `role="progressbar"` + `aria-value*` on progress bars
+- `app/admin/page.tsx` — added sign out button in header; `id="main-content"`; `scope="col"` on `<th>`; `overflow-x-auto` on tables
+- `app/cagnotte/[slug]/page.tsx` — Open Graph + Twitter card meta tags; `id="main-content"`; `role="progressbar"` on progress bar
+- `app/cagnotte/[slug]/succes/page.tsx` — `id="main-content"` on `<main>`
+- `app/page.tsx` — `id="main-content"` on `<main>`
+- `app/dashboard/cagnotte/[id]/page.tsx` — `id="main-content"`; `role="progressbar"`; `scope="col"` on `<th>`; `overflow-x-auto` on table
+- `components/ThemeToggle.tsx` — `aria-hidden="true"` on Sun/Moon icons
+- `components/SignOutButton.tsx` — `aria-label` instead of `title` on button; `aria-hidden` on icon
+- `components/AdminCharts.tsx` — `role="img"` + `aria-label` on chart wrapper
+- `components/ParticipationForm.tsx` — `aria-pressed` on quick-pick amount buttons; `aria-required` on name field; sr-only required fields note
 
 ---
 
