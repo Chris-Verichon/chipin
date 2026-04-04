@@ -22,6 +22,7 @@ CREATE TABLE cagnottes (
   creator_id                  UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   stripe_checkout_session_id  TEXT UNIQUE, -- the €4.99 creation payment session
   is_active                   BOOLEAN NOT NULL DEFAULT true,
+  total_raised                INTEGER NOT NULL DEFAULT 0, -- sum of paid contributions, in cents
   created_at                  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -86,3 +87,14 @@ CREATE POLICY "Service role full access participations"
 
 CREATE POLICY "Service role full access fees"
   ON cagnotte_fees USING (auth.role() = 'service_role');
+
+-- RPC — safely increment total_raised (called by webhook after payment_intent.succeeded)
+CREATE OR REPLACE FUNCTION increment_total_raised(cagnotte_id UUID, amount_cents INTEGER)
+RETURNS void
+LANGUAGE sql
+SECURITY DEFINER
+AS $$
+  UPDATE cagnottes
+  SET total_raised = total_raised + amount_cents
+  WHERE id = cagnotte_id;
+$$;

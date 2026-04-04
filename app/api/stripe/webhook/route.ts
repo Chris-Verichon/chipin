@@ -57,13 +57,37 @@ export async function POST(req: NextRequest) {
 // payment_intent.succeeded — mark participation as paid
 // ============================================================
 async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
-  const { error } = await supabase
+  // Fetch the participation to get cagnotte_id and amount
+  const { data: participation, error: fetchError } = await supabase
+    .from("participations")
+    .select("id, cagnotte_id, amount")
+    .eq("stripe_payment_intent_id", paymentIntent.id)
+    .single();
+
+  if (fetchError || !participation) {
+    throw new Error(`Failed to fetch participation: ${fetchError?.message}`);
+  }
+
+  // Mark participation as paid
+  const { error: updateError } = await supabase
     .from("participations")
     .update({ status: "paid" })
-    .eq("stripe_payment_intent_id", paymentIntent.id);
+    .eq("id", participation.id);
 
-  if (error) {
-    throw new Error(`Failed to mark participation as paid: ${error.message}`);
+  if (updateError) {
+    throw new Error(`Failed to mark participation as paid: ${updateError.message}`);
+  }
+
+  // Increment total_raised on the fundraiser (amount stored in cents)
+  const amountCents = Math.round(participation.amount * 100);
+  const { error: raisedError } = await supabase.rpc("increment_total_raised", {
+    cagnotte_id: participation.cagnotte_id,
+    amount_cents: amountCents,
+  });
+
+  if (raisedError) {
+    // Non-fatal: log but don't fail the webhook
+    console.error("[webhook] Failed to increment total_raised:", raisedError.message);
   }
 }
 
