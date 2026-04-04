@@ -49,6 +49,7 @@ export type Database = {
           creator_id: string;
           stripe_checkout_session_id: string | null;
           is_active: boolean;
+          total_raised: number;
           created_at: string;
         };
         Insert: {
@@ -60,6 +61,7 @@ export type Database = {
           creator_id: string;
           stripe_checkout_session_id?: string | null;
           is_active?: boolean;
+          total_raised?: number;
           created_at?: string;
         };
         Update: {
@@ -71,6 +73,7 @@ export type Database = {
           creator_id?: string;
           stripe_checkout_session_id?: string | null;
           is_active?: boolean;
+          total_raised?: number;
           created_at?: string;
         };
         Relationships: [
@@ -177,7 +180,15 @@ export type Database = {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      increment_total_raised: {
+        Args: {
+          cagnotte_id: string;
+          amount_cents: number;
+        };
+        Returns: undefined;
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };
