@@ -10,7 +10,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### In Progress
-- `feature/auth-google` — Google OAuth + role-based access
+- `feature/stripe-webhooks` — Stripe webhook handler
+
+---
+
+## [0.4.0] — Google Auth — 2026-04-04
+
+### Added
+- `app/api/auth/[...nextauth]/route.ts` — NextAuth v4 with Google provider
+  - Auto-upserts user in Supabase on every login
+  - Auto-promotes user to `admin` if email matches `ADMIN_EMAIL` env var
+  - Attaches `id` and `role` to the session via JWT callback
+- `lib/auth.ts` — typed `getServerSession` helper for server components and API routes
+- `types/next-auth.d.ts` — session type augmentation (`id`, `role`)
+- `middleware.ts` — route protection for `/dashboard` and `/admin`, admin-only guard
+- `app/login/page.tsx` — login page with Google sign-in button (shadcn Card)
+
+### Fixed
+- `lib/database.types.ts` — added required `Views`, `Functions`, `Enums`, `CompositeTypes` fields for supabase-js v2 compatibility
 
 ---
 
