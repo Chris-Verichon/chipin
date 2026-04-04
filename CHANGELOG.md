@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.10.0] — UI Polish + Accessibilité — 2026-04-04
+## [0.10.0] — UI Polish + Accessibilité + Animations + Admin Monitoring — 2026-04-04
 
 ### Added
 - `components/SignOutButton.tsx` — client component with `signOut({ callbackUrl: "/" })` from next-auth/react
@@ -22,19 +22,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `app/dashboard/loading.tsx` — skeleton loading state for dashboard
 - `app/cagnotte/[slug]/loading.tsx` — skeleton loading state for public fundraiser page
 - `app/admin/loading.tsx` — skeleton loading state for admin dashboard
+- `supabase/add_login_events.sql` — migration SQL: table `login_events(id, user_id, created_at)` with RLS (service role only) and indexes
+- `lib/database.types.ts` — added `login_events` table type
 
 ### Updated
 - `app/layout.tsx` — added skip link ("Passer au contenu principal") for keyboard navigation (WCAG 2.4.1)
-- `app/dashboard/page.tsx` — added sign out button in header; `id="main-content"` on `<main>`; `role="progressbar"` + `aria-value*` on progress bars
-- `app/admin/page.tsx` — added sign out button in header; `id="main-content"`; `scope="col"` on `<th>`; `overflow-x-auto` on tables
+- `app/page.tsx` — `id="main-content"`; landing hero + feature cards now animate in with `animate-in fade-in-0 slide-in-from-bottom` and staggered delays (tw-animate-css)
+- `app/dashboard/page.tsx` — added sign out button in header; `id="main-content"`; `role="progressbar"` + `aria-value*` on progress bars
+- `app/admin/page.tsx` — added sign out button in header; `id="main-content"`; `scope="col"` on `<th>`; `overflow-x-auto` on tables; new "Ce mois-ci" KPI row (revenus mois + année, nouveaux inscrits, cagnottes créées, taux de conversion, connexions totales + uniques); user growth AreaChart side-by-side with contributions chart
 - `app/cagnotte/[slug]/page.tsx` — Open Graph + Twitter card meta tags; `id="main-content"`; `role="progressbar"` on progress bar
 - `app/cagnotte/[slug]/succes/page.tsx` — `id="main-content"` on `<main>`
-- `app/page.tsx` — `id="main-content"` on `<main>`
 - `app/dashboard/cagnotte/[id]/page.tsx` — `id="main-content"`; `role="progressbar"`; `scope="col"` on `<th>`; `overflow-x-auto` on table
 - `components/ThemeToggle.tsx` — `aria-hidden="true"` on Sun/Moon icons
 - `components/SignOutButton.tsx` — `aria-label` instead of `title` on button; `aria-hidden` on icon
-- `components/AdminCharts.tsx` — `role="img"` + `aria-label` on chart wrapper
+- `components/AdminCharts.tsx` — added `userGrowthData` prop + `growthOnly` mode for user growth AreaChart; `role="img"` + `aria-label` on both chart wrappers
 - `components/ParticipationForm.tsx` — `aria-pressed` on quick-pick amount buttons; `aria-required` on name field; sr-only required fields note
+- `app/api/auth/[...nextauth]/route.ts` — `signIn` callback now inserts a row in `login_events` on every Google login
 
 ---
 
