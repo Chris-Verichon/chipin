@@ -36,6 +36,16 @@ export const authOptions: NextAuthOptions = {
         return false;
       }
 
+      // Track login event
+      const { data: userData } = await supabase
+        .from("users")
+        .select("id")
+        .eq("google_id", googleId)
+        .single();
+      if (userData?.id) {
+        await supabase.from("login_events").insert({ user_id: userData.id });
+      }
+
       return true;
     },
 
@@ -57,10 +67,21 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
 
-    async jwt({ token, account, user }) {
+    async jwt({ token, account }) {
       if (account) {
         token.googleId = account.providerAccountId;
       }
+
+      // Always refresh role from DB so proxy.ts has the correct value
+      if (token.email) {
+        const { data } = await supabase
+          .from("users")
+          .select("role")
+          .eq("email", token.email as string)
+          .single();
+        if (data) token.role = data.role;
+      }
+
       return token;
     },
   },

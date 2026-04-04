@@ -61,6 +61,9 @@ npm install
 cp .env.local.example .env.local
 # Fill in all values in .env.local
 
+# Generate NEXTAUTH_SECRET
+openssl rand -base64 32
+
 # 4. Initialize the database
 # Run the SQL from /supabase/schema.sql in the Supabase SQL editor
 
@@ -73,6 +76,19 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000)
+
+### Google OAuth — Authorized redirect URI
+
+In [console.cloud.google.com](https://console.cloud.google.com):
+**APIs & Services → Credentials → OAuth 2.0 Client ID → Authorized redirect URIs**
+
+Add this exact URI:
+
+```
+http://localhost:3000/api/auth/callback/google
+```
+
+---
 
 ### Stripe Webhooks (local)
 

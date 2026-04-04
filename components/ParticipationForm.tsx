@@ -109,6 +109,7 @@ export default function ParticipationForm({ cagnotteId, cagnotteTitle }: Props) 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <p className="sr-only">Les champs marqués d&apos;un astérisque (*) sont obligatoires.</p>
       {/* Quick amounts */}
       <div>
         <Label>Montant *</Label>
@@ -118,6 +119,7 @@ export default function ParticipationForm({ cagnotteId, cagnotteTitle }: Props) 
               key={a}
               type="button"
               onClick={() => setForm((p) => ({ ...p, amount: String(a) }))}
+              aria-pressed={form.amount === String(a)}
               disabled={loading}
               className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
                 form.amount === String(a)
@@ -168,6 +170,7 @@ export default function ParticipationForm({ cagnotteId, cagnotteTitle }: Props) 
             value={form.participant_name}
             onChange={handleChange}
             maxLength={80}
+            aria-required="true"
             disabled={loading}
           />
         </div>

@@ -26,7 +26,7 @@ export default async function SuccesPage({ params }: Props) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl px-4 py-24 flex flex-col items-center text-center gap-6">
+      <main id="main-content" className="mx-auto max-w-3xl px-4 py-24 flex flex-col items-center text-center gap-6">
         <div className="rounded-full bg-green-100 dark:bg-green-900/30 p-5">
           <CheckCircle2 className="h-12 w-12 text-green-600 dark:text-green-400" />
         </div>
@@ -39,10 +39,10 @@ export default async function SuccesPage({ params }: Props) {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
-          <Button render={<Link href={`/cagnotte/${slug}`} />} variant="outline">
+          <Button render={<Link href={`/cagnotte/${slug}`} />} nativeButton={false} variant="outline">
             Retour à la cagnotte
           </Button>
-          <Button render={<Link href="/" />}>
+          <Button render={<Link href="/" />} nativeButton={false}>
             Accueil
           </Button>
         </div>

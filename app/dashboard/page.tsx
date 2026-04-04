@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import CagnotteForm from "@/components/CagnotteForm";
 import CreationBanner from "@/components/CreationBanner";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { SignOutButton } from "@/components/SignOutButton";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import Link from "next/link";
@@ -64,17 +65,18 @@ export default async function DashboardPage({
             {session.user.role === "admin" && (
               <Link
                 href="/admin"
-                className="text-xs font-medium text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-semibold transition-colors hover:bg-muted"
               >
-                Admin
+                ⚙ Admin
               </Link>
             )}
             <ThemeToggle />
+            <SignOutButton />
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-4 py-8 space-y-8">
+      <main id="main-content" className="mx-auto max-w-5xl px-4 py-8 space-y-8">
         {/* Creation status banner */}
         {creationStatus && <CreationBanner status={creationStatus} />}
 
@@ -115,7 +117,7 @@ export default async function DashboardPage({
               Gérez vos collectes et suivez les participations.
             </p>
           </div>
-          <CagnotteForm />
+          <CagnotteForm role={session.user.role} />
         </div>
 
         <Separator />
@@ -181,7 +183,14 @@ export default async function DashboardPage({
                         )}
                       </div>
                       {progressPct !== null && (
-                        <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                        <div
+                          role="progressbar"
+                          aria-valuenow={progressPct}
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                          aria-label={`Progression : ${progressPct} %`}
+                          className="h-1.5 w-full rounded-full bg-muted overflow-hidden"
+                        >
                           <div
                             className="h-full rounded-full bg-primary transition-all"
                             style={{ width: `${progressPct}%` }}
@@ -192,7 +201,7 @@ export default async function DashboardPage({
 
                     {/* Footer row */}
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>
+                      <span suppressHydrationWarning>
                         {formatDistanceToNow(new Date(c.created_at), {
                           addSuffix: true,
                           locale: fr,

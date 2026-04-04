@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { SignOutButton } from "@/components/SignOutButton";
 import AdminCharts from "@/components/AdminCharts";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -20,6 +21,12 @@ export default async function AdminDashboardPage() {
     redirect("/dashboard");
   }
 
+  // ── Date boundaries ────────────────────────────────────────
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  const startOfYear = new Date(now.getFullYear(), 0, 1).toISOString();
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
   // ── Global counts ──────────────────────────────────────────
   const [
     { count: totalUsers },
@@ -28,6 +35,15 @@ export default async function AdminDashboardPage() {
     { data: feeRows },
     { data: cagnottes },
     { data: recentUsers },
+    // Month / year metrics
+    { count: newUsersThisMonth },
+    { count: cagnottesThisMonth },
+    { data: feesThisMonth },
+    { data: feesThisYear },
+    // Login tracking
+    { data: loginEventsThisMonth },
+    // User growth: signups last 30 days
+    { data: recentSignups },
   ] = await Promise.all([
     supabase.from("users").select("id", { count: "exact", head: true }),
     supabase.from("cagnottes").select("id", { count: "exact", head: true }),
@@ -35,12 +51,9 @@ export default async function AdminDashboardPage() {
       .from("participations")
       .select("id", { count: "exact", head: true })
       .eq("status", "paid"),
-    // Total platform revenue from paid fees
-    supabase
-      .from("cagnotte_fees")
-      .select("amount")
-      .eq("status", "paid"),
-    // All cagnottes with raised amounts for chart data
+    // All-time platform revenue
+    supabase.from("cagnotte_fees").select("amount").eq("status", "paid"),
+    // All cagnottes for table
     supabase
       .from("cagnottes")
       .select("id, title, slug, total_raised, is_active, created_at, creator_id")
@@ -52,17 +65,63 @@ export default async function AdminDashboardPage() {
       .select("id, email, name, role, created_at")
       .order("created_at", { ascending: false })
       .limit(10),
+    // New users this month
+    supabase
+      .from("users")
+      .select("id", { count: "exact", head: true })
+      .gte("created_at", startOfMonth),
+    // Cagnottes created this month
+    supabase
+      .from("cagnottes")
+      .select("id", { count: "exact", head: true })
+      .gte("created_at", startOfMonth),
+    // Revenue this month
+    supabase
+      .from("cagnotte_fees")
+      .select("amount")
+      .eq("status", "paid")
+      .gte("created_at", startOfMonth),
+    // Revenue this year
+    supabase
+      .from("cagnotte_fees")
+      .select("amount")
+      .eq("status", "paid")
+      .gte("created_at", startOfYear),
+    // Login events this month (with user_id for unique count)
+    supabase
+      .from("login_events")
+      .select("user_id")
+      .gte("created_at", startOfMonth),
+    // User signups last 30 days (for growth chart)
+    supabase
+      .from("users")
+      .select("created_at")
+      .gte("created_at", thirtyDaysAgo),
   ]);
 
   const totalFeeRevenue =
     feeRows?.reduce((sum, f) => sum + (f.amount ?? 0), 0) ?? 0;
+  const revenueThisMonth =
+    feesThisMonth?.reduce((sum, f) => sum + (f.amount ?? 0), 0) ?? 0;
+  const revenueThisYear =
+    feesThisYear?.reduce((sum, f) => sum + (f.amount ?? 0), 0) ?? 0;
+
+  // Login stats
+  const totalLoginsThisMonth = loginEventsThisMonth?.length ?? 0;
+  const uniqueLoginsThisMonth = new Set(loginEventsThisMonth?.map((e) => e.user_id)).size;
+
+  // Conversion rate: cagnottes created this month / new users this month
+  const conversionRate =
+    newUsersThisMonth && newUsersThisMonth > 0
+      ? Math.round(((cagnottesThisMonth ?? 0) / newUsersThisMonth) * 100)
+      : 0;
 
   // ── Chart data: daily contributions for last 30 days ───────
   const { data: dailyContributions } = await supabase
     .from("participations")
     .select("amount, created_at")
     .eq("status", "paid")
-    .gte("created_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+    .gte("created_at", thirtyDaysAgo);
 
   // Group by day (YYYY-MM-DD)
   const dayMap: Record<string, number> = {};
@@ -76,6 +135,16 @@ export default async function AdminDashboardPage() {
       date,
       total: Math.round(total) / 100, // euros
     }));
+
+  // ── Chart data: daily user signups for last 30 days ────────
+  const signupMap: Record<string, number> = {};
+  for (const u of recentSignups ?? []) {
+    const day = u.created_at.slice(0, 10);
+    signupMap[day] = (signupMap[day] ?? 0) + 1;
+  }
+  const userGrowthData = Object.entries(signupMap)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([date, count]) => ({ date, count }));
 
   return (
     <div className="min-h-screen bg-background">
@@ -97,11 +166,12 @@ export default async function AdminDashboardPage() {
               {session.user.email}
             </span>
             <ThemeToggle />
+            <SignOutButton />
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-8 space-y-10">
+      <main id="main-content" className="mx-auto max-w-6xl px-4 py-8 space-y-10">
         <div>
           <h1 className="text-2xl font-bold">Administration</h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -109,7 +179,7 @@ export default async function AdminDashboardPage() {
           </p>
         </div>
 
-        {/* ── KPI cards ── */}
+        {/* ── KPI cards — all-time ── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <Card>
             <CardContent className="pt-5">
@@ -131,7 +201,7 @@ export default async function AdminDashboardPage() {
           </Card>
           <Card>
             <CardContent className="pt-5">
-              <p className="text-xs text-muted-foreground uppercase tracking-wide">Revenus (frais)</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide">Revenus (total)</p>
               <p className="text-3xl font-bold mt-1">
                 {totalFeeRevenue.toLocaleString("fr-FR", {
                   style: "currency",
@@ -145,13 +215,76 @@ export default async function AdminDashboardPage() {
           </Card>
         </div>
 
-        {/* ── Chart ── */}
-        {chartData.length > 0 && (
-          <div className="space-y-3">
-            <h2 className="font-semibold text-lg">Contributions (30 derniers jours)</h2>
-            <AdminCharts data={chartData} />
+        {/* ── KPI cards — ce mois-ci ── */}
+        <div>
+          <h2 className="font-semibold text-lg mb-3">Ce mois-ci</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            <Card>
+              <CardContent className="pt-5">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">Revenus (mois)</p>
+                <p className="text-2xl font-bold mt-1">
+                  {revenueThisMonth.toLocaleString("fr-FR", {
+                    style: "currency",
+                    currency: "EUR",
+                  })}
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-5">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">Revenus (année)</p>
+                <p className="text-2xl font-bold mt-1">
+                  {revenueThisYear.toLocaleString("fr-FR", {
+                    style: "currency",
+                    currency: "EUR",
+                  })}
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-5">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">Nouveaux inscrits</p>
+                <p className="text-2xl font-bold mt-1">{newUsersThisMonth ?? 0}</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-5">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">Cagnottes créées</p>
+                <p className="text-2xl font-bold mt-1">{cagnottesThisMonth ?? 0}</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-5">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">Taux de conversion</p>
+                <p className="text-2xl font-bold mt-1">{conversionRate} %</p>
+                <p className="text-xs text-muted-foreground mt-0.5">cagnottes / inscrits</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-5">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">Connexions</p>
+                <p className="text-2xl font-bold mt-1">{totalLoginsThisMonth}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{uniqueLoginsThisMonth} uniques</p>
+              </CardContent>
+            </Card>
           </div>
-        )}
+        </div>
+
+        {/* ── Charts ── */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          {chartData.length > 0 && (
+            <div className="space-y-3">
+              <h2 className="font-semibold text-lg">Contributions (30 derniers jours)</h2>
+              <AdminCharts data={chartData} userGrowthData={userGrowthData} />
+            </div>
+          )}
+          {userGrowthData.length > 0 && (
+            <div className="space-y-3">
+              <h2 className="font-semibold text-lg">Nouveaux inscrits (30 derniers jours)</h2>
+              <AdminCharts data={[]} userGrowthData={userGrowthData} growthOnly />
+            </div>
+          )}
+        </div>
 
         <Separator />
 
@@ -159,14 +292,14 @@ export default async function AdminDashboardPage() {
         <div className="space-y-4">
           <h2 className="font-semibold text-lg">Top cagnottes</h2>
           {cagnottes && cagnottes.length > 0 ? (
-            <div className="rounded-lg border overflow-hidden">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto rounded-lg border">
+              <table className="w-full text-sm min-w-[480px]">
                 <thead className="bg-muted/50">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground">Titre</th>
-                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">Collecté</th>
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden sm:table-cell">Statut</th>
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Créée</th>
+                    <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">Titre</th>
+                    <th scope="col" className="px-4 py-3 text-right font-medium text-muted-foreground">Collecté</th>
+                    <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground hidden sm:table-cell">Statut</th>
+                    <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Créée</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -191,7 +324,7 @@ export default async function AdminDashboardPage() {
                           {c.is_active ? "Active" : "Fermée"}
                         </Badge>
                       </td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground hidden md:table-cell">
+                      <td suppressHydrationWarning className="px-4 py-3 text-xs text-muted-foreground hidden md:table-cell">
                         {formatDistanceToNow(new Date(c.created_at), {
                           addSuffix: true,
                           locale: fr,
@@ -213,14 +346,14 @@ export default async function AdminDashboardPage() {
         <div className="space-y-4">
           <h2 className="font-semibold text-lg">Derniers inscrits</h2>
           {recentUsers && recentUsers.length > 0 ? (
-            <div className="rounded-lg border overflow-hidden">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto rounded-lg border">
+              <table className="w-full text-sm min-w-[420px]">
                 <thead className="bg-muted/50">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground">Email</th>
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden sm:table-cell">Nom</th>
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground">Rôle</th>
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Inscription</th>
+                    <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">Email</th>
+                    <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground hidden sm:table-cell">Nom</th>
+                    <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">Rôle</th>
+                    <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Inscription</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -238,7 +371,7 @@ export default async function AdminDashboardPage() {
                           {u.role}
                         </Badge>
                       </td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground hidden md:table-cell">
+                      <td suppressHydrationWarning className="px-4 py-3 text-xs text-muted-foreground hidden md:table-cell">
                         {formatDistanceToNow(new Date(u.created_at), {
                           addSuffix: true,
                           locale: fr,
