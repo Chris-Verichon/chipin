@@ -10,7 +10,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### In Progress
-- `feature/stripe-webhooks` — Stripe webhook handler
+- `feature/cagnotte-creation` — creation modal + €4.99 Stripe Checkout
+
+---
+
+## [0.5.0] — Stripe Webhooks — 2026-04-04
+
+### Added
+- `app/api/stripe/webhook/route.ts` — unified webhook handler
+  - `payment_intent.succeeded` → marks participation as `paid`
+  - `payment_intent.payment_failed` → marks participation as `failed`
+  - `checkout.session.completed` → creates fundraiser + fee record from metadata
+  - Stripe signature verification on every request
+- `app/api/stripe/checkout/route.ts` — creates PaymentIntent + pending participation row
+- `app/api/stripe/creation-checkout/route.ts` — creates €4.99 Stripe Checkout Session with fundraiser metadata
+- `nanoid` installed for collision-resistant slug generation
 
 ---
 
