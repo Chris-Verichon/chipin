@@ -26,7 +26,11 @@ function formatDate(dateStr: string) {
 
 export default function AdminCharts({ data }: Props) {
   return (
-    <div className="rounded-xl border bg-card p-4">
+    <div
+      className="rounded-xl border bg-card p-4"
+      role="img"
+      aria-label="Graphique des contributions journalières sur les 30 derniers jours"
+    >
       <ResponsiveContainer width="100%" height={240}>
         <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
           <defs>
