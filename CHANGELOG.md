@@ -9,8 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### In Progress
-- `release/v1.0` — production release
+*Nothing pending.*
+
+---
+
+## [1.0.0] — Production Release — 2026-04-04
+
+### Summary
+First stable release of ChipIn. All features complete, accessibility audited, admin monitoring enriched.
+
+### Changed
+- Version bumped to `1.0.0`
+- `README.md` — complete production deployment guide (Vercel + Supabase migrations + Stripe production webhooks)
 
 ---
 

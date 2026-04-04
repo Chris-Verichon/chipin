@@ -159,21 +159,75 @@ See [`.env.local.example`](.env.local.example) for the full list.
 
 ## Deployment (Vercel)
 
+### 1 — Push to GitHub
+
 ```bash
-# 1. Push to GitHub
-git add . && git commit -m "chore: ready for deploy" && git push
-
-# 2. Import on vercel.com → New Project → Import GitHub repo
-
-# 3. Add all environment variables (Settings → Environment Variables)
-
-# 4. Update NEXT_PUBLIC_APP_URL with your Vercel URL
-
-# 5. Create a Stripe production webhook
-# → Stripe Dashboard → Webhooks → Add endpoint
-# → URL: https://your-domain.vercel.app/api/stripe/webhook
-# → Events: payment_intent.succeeded, payment_intent.payment_failed, checkout.session.completed
+git checkout main
+git push origin main
 ```
+
+### 2 — Import on Vercel
+
+1. Go to [vercel.com/new](https://vercel.com/new)
+2. **Import** your GitHub repository
+3. Framework preset: **Next.js** (auto-detected)
+4. Root directory: leave empty (the `chipin/` folder is the root)
+
+### 3 — Environment variables
+
+In **Settings → Environment Variables**, add every variable from the table below. Set them for **Production**, **Preview**, and **Development**.
+
+| Variable | Where to find it |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Settings → API |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Settings → API (service_role key) |
+| `STRIPE_SECRET_KEY` | Stripe Dashboard → Developers → API Keys |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe Dashboard → Developers → API Keys |
+| `STRIPE_WEBHOOK_SECRET` | Created in step 5 below |
+| `NEXTAUTH_URL` | Your production URL, e.g. `https://chipin.vercel.app` |
+| `NEXTAUTH_SECRET` | `openssl rand -base64 32` |
+| `GOOGLE_CLIENT_ID` | Google Cloud Console → Credentials |
+| `GOOGLE_CLIENT_SECRET` | Google Cloud Console → Credentials |
+| `ADMIN_EMAIL` | Your Google email (auto-promoted to admin on first login) |
+| `NEXT_PUBLIC_APP_URL` | Your production URL, e.g. `https://chipin.vercel.app` |
+| `CREATION_FEE_AMOUNT` | `499` (= €4.99) |
+
+### 4 — Supabase: run all migrations
+
+In your **Supabase SQL Editor**, run in order:
+
+```sql
+-- 1. Base schema (tables, RLS, functions)
+-- Content of: supabase/schema.sql
+
+-- 2. Login tracking
+-- Content of: supabase/add_login_events.sql
+```
+
+### 5 — Google OAuth: add production redirect URI
+
+In [console.cloud.google.com](https://console.cloud.google.com):
+**APIs & Services → Credentials → your OAuth 2.0 client → Authorized redirect URIs**
+
+Add:
+```
+https://your-domain.vercel.app/api/auth/callback/google
+```
+
+### 6 — Stripe: create a production webhook
+
+1. **Stripe Dashboard → Developers → Webhooks → Add endpoint**
+2. URL: `https://your-domain.vercel.app/api/stripe/webhook`
+3. Events to listen for:
+   - `payment_intent.succeeded`
+   - `payment_intent.payment_failed`
+   - `checkout.session.completed`
+4. Copy the **Signing secret** → paste into `STRIPE_WEBHOOK_SECRET` in Vercel
+
+### 7 — Redeploy
+
+After adding all env vars, trigger a new deployment:
+**Vercel Dashboard → Deployments → Redeploy** (or push a new commit).
 
 ---
 
