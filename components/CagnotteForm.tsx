@@ -17,7 +17,8 @@ import {
 import { toast } from "sonner";
 import { PlusCircle } from "lucide-react";
 
-export default function CagnotteForm() {
+export default function CagnotteForm({ role }: { role: string }) {
+  const isAdmin = role === "admin";
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -90,9 +91,12 @@ export default function CagnotteForm() {
         <DialogHeader>
           <DialogTitle>Créer une cagnotte</DialogTitle>
           <DialogDescription>
-            Remplissez les informations ci-dessous. Le paiement de{" "}
-            <strong>4,99&nbsp;€</strong> sera demandé pour finaliser la
-            création.
+            Remplissez les informations ci-dessous.{" "}
+            {isAdmin ? (
+              <strong>Gratuit en tant qu&apos;admin.</strong>
+            ) : (
+              <>Le paiement de <strong>4,99 €</strong> sera demandé pour finaliser la création.</>
+            )}
           </DialogDescription>
         </DialogHeader>
 
@@ -154,7 +158,7 @@ export default function CagnotteForm() {
               Annuler
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Redirection…" : "Créer (4,99 €)"}
+              {loading ? "Enregistrement…" : isAdmin ? "Créer" : "Créer (4,99 €)"}
             </Button>
           </DialogFooter>
         </form>

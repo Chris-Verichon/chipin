@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { stripe, CREATION_FEE_AMOUNT } from "@/lib/stripe";
+import { supabase } from "@/lib/supabase";
 import { nanoid } from "nanoid";
 
 // POST /api/stripe/creation-checkout
@@ -38,7 +39,27 @@ export async function POST(req: NextRequest) {
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
-  // Create Stripe Checkout Session for the €4.99 creation fee
+  // ── Admin bypass: create cagnotte directly, no payment required ──
+  if (session.user.role === "admin") {
+    const { error: cagnotteError } = await supabase
+      .from("cagnottes")
+      .insert({
+        slug,
+        title: title.trim(),
+        description: description?.trim() ?? null,
+        goal: goal ? parseFloat(goal) : null,
+        creator_id: session.user.id,
+        is_active: true,
+      });
+
+    if (cagnotteError) {
+      return NextResponse.json({ error: cagnotteError.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ url: `${appUrl}/dashboard?creation=success` });
+  }
+
+  // ── Creator: Stripe Checkout Session for €4.99 ──
   const checkoutSession = await stripe.checkout.sessions.create({
     mode: "payment",
     payment_method_types: ["card"],
