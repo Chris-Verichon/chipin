@@ -17,6 +17,7 @@ export type Database = {
           name: string | null;
           avatar_url: string | null;
           role: UserRole;
+          stripe_account_id: string | null;
           created_at: string;
         };
         Insert: {
@@ -26,6 +27,7 @@ export type Database = {
           name?: string | null;
           avatar_url?: string | null;
           role?: UserRole;
+          stripe_account_id?: string | null;
           created_at?: string;
         };
         Update: {
@@ -35,6 +37,7 @@ export type Database = {
           name?: string | null;
           avatar_url?: string | null;
           role?: UserRole;
+          stripe_account_id?: string | null;
           created_at?: string;
         };
         Relationships: [];
