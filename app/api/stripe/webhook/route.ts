@@ -3,9 +3,6 @@ import { stripe } from "@/lib/stripe";
 import { supabase } from "@/lib/supabase";
 import Stripe from "stripe";
 
-// Stripe requires the raw body to verify webhook signature
-export const config = { api: { bodyParser: false } };
-
 export async function POST(req: NextRequest) {
   const body = await req.text();
   const signature = req.headers.get("stripe-signature");
@@ -29,14 +26,6 @@ export async function POST(req: NextRequest) {
 
   try {
     switch (event.type) {
-      case "payment_intent.succeeded":
-        await handlePaymentIntentSucceeded(event.data.object as Stripe.PaymentIntent);
-        break;
-
-      case "payment_intent.payment_failed":
-        await handlePaymentIntentFailed(event.data.object as Stripe.PaymentIntent);
-        break;
-
       case "checkout.session.completed":
         await handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
         break;
@@ -54,63 +43,57 @@ export async function POST(req: NextRequest) {
 }
 
 // ============================================================
-// payment_intent.succeeded — mark participation as paid
-// ============================================================
-async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
-  // Fetch the participation to get cagnotte_id and amount
-  const { data: participation, error: fetchError } = await supabase
-    .from("participations")
-    .select("id, cagnotte_id, amount")
-    .eq("stripe_payment_intent_id", paymentIntent.id)
-    .single();
-
-  if (fetchError || !participation) {
-    throw new Error(`Failed to fetch participation: ${fetchError?.message}`);
-  }
-
-  // Mark participation as paid
-  const { error: updateError } = await supabase
-    .from("participations")
-    .update({ status: "paid" })
-    .eq("id", participation.id);
-
-  if (updateError) {
-    throw new Error(`Failed to mark participation as paid: ${updateError.message}`);
-  }
-
-  // Increment total_raised on the fundraiser (amount stored in cents)
-  const amountCents = Math.round(participation.amount * 100);
-  const { error: raisedError } = await supabase.rpc("increment_total_raised", {
-    cagnotte_id: participation.cagnotte_id,
-    amount_cents: amountCents,
-  });
-
-  if (raisedError) {
-    // Non-fatal: log but don't fail the webhook
-    console.error("[webhook] Failed to increment total_raised:", raisedError.message);
-  }
-}
-
-// ============================================================
-// payment_intent.payment_failed — mark participation as failed
-// ============================================================
-async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
-  const { error } = await supabase
-    .from("participations")
-    .update({ status: "failed" })
-    .eq("stripe_payment_intent_id", paymentIntent.id);
-
-  if (error) {
-    throw new Error(`Failed to mark participation as failed: ${error.message}`);
-  }
-}
-
-// ============================================================
-// checkout.session.completed — create fundraiser + fee record
+// checkout.session.completed — contribution OR fundraiser creation
 // ============================================================
 async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
   const { metadata } = session;
+  if (!metadata) return;
 
+  // ── Contribution ──────────────────────────────────────────
+  if (metadata.type === "contribution") {
+    // Only process if payment actually succeeded
+    if (session.payment_status !== "paid") return;
+    const { cagnotte_id, participant_email, participant_name, amount, message, is_anonymous } = metadata;
+
+    if (!cagnotte_id || !participant_email || !amount) {
+      throw new Error("[webhook] Missing required contribution metadata");
+    }
+
+    const isAnon = is_anonymous === "true";
+    const amountFloat = parseFloat(amount);
+
+    // Insert participation as paid
+    const { error: insertError } = await supabase.from("participations").insert({
+      cagnotte_id,
+      participant_name: isAnon ? "Anonyme" : participant_name,
+      participant_email,
+      amount: amountFloat,
+      message: message || null,
+      stripe_payment_intent_id: session.payment_intent as string,
+      status: "paid",
+      is_anonymous: isAnon,
+    });
+
+    if (insertError) {
+      // Duplicate = webhook already processed (Stripe retry), safe to ignore
+      if (insertError.code === "23505") return;
+      throw new Error(`Failed to insert participation: ${insertError.message}`);
+    }
+
+    // Increment total_raised on the fundraiser
+    const { error: raisedError } = await supabase.rpc("increment_total_raised", {
+      cagnotte_id,
+      amount_cents: Math.round(amountFloat * 100),
+    });
+
+    if (raisedError) {
+      console.error("[webhook] Failed to increment total_raised:", raisedError.message);
+    }
+
+    return;
+  }
+
+  // ── Fundraiser creation ─────────────────────────────────────
   // Only handle sessions created for fundraiser creation (mode: "payment", type: "creation")
   if (!metadata || metadata.type !== "creation") return;
 
@@ -136,6 +119,8 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
     .single();
 
   if (cagnotteError) {
+    // Duplicate = webhook already processed (Stripe retry), safe to ignore
+    if (cagnotteError.code === "23505") return;
     throw new Error(`Failed to create fundraiser: ${cagnotteError.message}`);
   }
 

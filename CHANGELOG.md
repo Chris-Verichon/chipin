@@ -13,6 +13,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] — Stripe Connect + UX — 2026-04-07
+
+### Added
+- **Stripe Connect** — creators can link their Stripe account from the dashboard; contributions are routed directly to their account via `transfer_data.destination` + `application_fee_amount`
+- `app/api/stripe/connect/route.ts` — creates a Stripe Standard account and generates an Account Links onboarding URL
+- `app/api/stripe/connect/callback/route.ts` — fallback redirect after onboarding
+- `components/DashboardSearch.tsx` — accessible combobox search bar (ARIA `combobox`/`listbox`/`option`, keyboard navigation ↑↓ Enter Escape) in the dashboard header, desktop only
+- `app/dashboard/guide/page.tsx` — creator guide page explaining the full flow (Stripe Connect → create → share → receive → withdraw), with dynamic fee percentage from `PLATFORM_FEE_PERCENT`
+- `docs_skipped/CONNECT.md` — Stripe Connect setup guide
+- `PLATFORM_FEE_PERCENT` env variable — platform commission per contribution in % (default: `5`)
+- `scripts.dev:stripe` in `package.json` — shortcut for `stripe listen --forward-to localhost:3000/api/stripe/webhook`
+
+### Changed
+- **Checkout flow** — replaced `PaymentIntent` + `stripe.confirmPayment()` (broken, no card fields) with a hosted **Checkout Session**; `ParticipationForm` now redirects via `window.location.href`
+- **Webhook** — contributions created directly as `paid` via `checkout.session.completed`; `payment_intent.succeeded/failed` handlers removed
+- **Webhook idempotency** — duplicate key errors (`23505`) silently ignored on `participations` and `cagnottes` inserts to handle Stripe retries
+- **Webhook** — added `payment_status !== "paid"` guard on contribution handling
+- `app/cagnotte/[slug]/page.tsx` — fixed `p.amount / 100` bug (amount stored in euros); total raised turns `text-green-700` when > 0
+- `app/cagnotte/[slug]/succes/page.tsx` — heading changed to "Merci pour votre participation"
+- `app/dashboard/page.tsx` — Stripe Connect banners; "Connecter Stripe" CTA; active badge green/white; stats grid responsive below 430px
+- `lib/database.types.ts` — added `stripe_account_id` to `users` types
+
+### Fixed
+- Removed deprecated `export const config = { api: { bodyParser: false } }` from webhook route (Next.js App Router warning)
+
+### Migration SQL required
+```sql
+ALTER TABLE users ADD COLUMN IF NOT EXISTS stripe_account_id TEXT UNIQUE;
+```
+
+---
+
 ## [1.0.0] — Production Release — 2026-04-04
 
 ### Summary
