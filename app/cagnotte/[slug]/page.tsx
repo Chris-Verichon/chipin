@@ -103,7 +103,7 @@ export default async function CagnottePage({ params }: Props) {
           <div className="space-y-2 pt-2">
             <div className="flex items-end justify-between gap-4">
               <div>
-                <span className="text-2xl font-bold">
+                <span className={`text-2xl font-bold transition-colors ${totalRaisedEur > 0 ? "text-green-700 dark:text-green-500" : ""}`}>
                   {totalRaisedEur.toLocaleString("fr-FR", {
                     style: "currency",
                     currency: "EUR",
@@ -171,7 +171,7 @@ export default async function CagnottePage({ params }: Props) {
                           {p.is_anonymous ? "Anonyme" : p.participant_name}
                         </span>
                         <Badge variant="secondary" className="shrink-0 text-xs">
-                          {(p.amount / 100).toLocaleString("fr-FR", {
+                          {Number(p.amount).toLocaleString("fr-FR", {
                             style: "currency",
                             currency: "EUR",
                           })}
