@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Merci pour votre contribution — ChipIn",
+  title: "Merci pour votre participation — ChipIn",
 };
 
 interface Props {
@@ -32,7 +32,7 @@ export default async function SuccesPage({ params }: Props) {
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold">Merci pour votre soutien&nbsp;!</h1>
+          <h1 className="text-3xl font-bold">Merci pour votre participation&nbsp;!</h1>
           <p className="text-muted-foreground max-w-md">
             Votre contribution a bien été enregistrée. Un email de confirmation vous a été envoyé.
           </p>

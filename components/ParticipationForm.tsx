@@ -8,9 +8,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { loadStripe } from "@stripe/stripe-js";
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 interface Props {
   cagnotteId: string;
@@ -73,30 +70,8 @@ export default function ParticipationForm({ cagnotteId, cagnotteTitle }: Props) 
         return;
       }
 
-      // Redirect to Stripe using the client secret
-      const stripe = await stripePromise;
-      if (!stripe) {
-        toast.error("Impossible de charger le module de paiement.");
-        return;
-      }
-
-      // Use confirmPayment with a return URL that includes the slug
-      const { error: stripeError } = await stripe.confirmPayment({
-        clientSecret: data.clientSecret,
-        confirmParams: {
-          return_url: `${window.location.origin}/cagnotte/${data.slug}/succes`,
-          payment_method_data: {
-            billing_details: {
-              name: isAnonymous ? "Anonyme" : form.participant_name.trim(),
-              email: form.participant_email.trim(),
-            },
-          },
-        },
-      });
-
-      if (stripeError) {
-        toast.error(stripeError.message ?? "Paiement refusé.");
-      }
+      // Redirect to Stripe hosted checkout page
+      window.location.href = data.url;
     } catch {
       toast.error("Une erreur réseau est survenue.");
     } finally {

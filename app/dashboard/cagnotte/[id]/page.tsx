@@ -65,7 +65,7 @@ export default async function CagnotteDetailPage({ params }: Props) {
               <ArrowLeft className="h-4 w-4" />
             </Link>
             <span className="text-xl font-bold tracking-tight">ChipIn</span>
-            <Badge variant="secondary">{session.user.role}</Badge>
+            <Badge className="bg-slate-100/80 text-slate-500 dark:bg-slate-800/50 dark:text-slate-400 border-0 capitalize">{session.user.role}</Badge>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-sm text-muted-foreground hidden sm:block">
