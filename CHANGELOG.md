@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.0] — UI Polish + i18n — 2026-04-14
+
+### Added
+- Colored icon badges on feature cards (emerald, violet, orange) with tinted backgrounds
+- Hover lift effect + shadow on feature cards
+- Glassmorphism (`backdrop-blur-sm`, `bg-card/50`) on feature cards
+
+### Changed
+- **Login page** — fully translated to French ("Connexion", "Continuer avec Google", etc.)
+- Feature cards layout centered (icon, title, description aligned center)
+- Cards use `rounded-2xl` for softer appearance
+
+---
+
 ## [1.1.0] — Stripe Connect + UX — 2026-04-07
 
 ### Added

@@ -71,7 +71,7 @@ export default async function CagnottePage({ params }: Props) {
     .limit(50);
 
   const totalRaisedEur = (cagnotte.total_raised ?? 0) / 100;
-  const goalEur = cagnotte.goal ? cagnotte.goal / 100 : null;
+  const goalEur = cagnotte.goal ? cagnotte.goal : null;
   const progressPct = goalEur
     ? Math.min(100, Math.round((totalRaisedEur / goalEur) * 100))
     : null;
