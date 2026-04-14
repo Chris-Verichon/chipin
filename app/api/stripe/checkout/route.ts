@@ -35,8 +35,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Fundraiser not found or inactive" }, { status: 404 });
   }
 
-  // @ts-expect-error — Supabase join type
-  const stripeAccountId: string | null = cagnotte.users?.stripe_account_id ?? null;
+  const stripeAccountId: string | null = (cagnotte.users as { stripe_account_id?: string } | null)?.stripe_account_id ?? null;
 
   const origin = req.headers.get("origin") ?? process.env.NEXTAUTH_URL ?? "http://localhost:3000";
 
