@@ -235,7 +235,7 @@ export default async function DashboardPage({
                         {c.goal && (
                           <span>
                             sur{" "}
-                            {(c.goal / 100).toLocaleString("fr-FR", {
+                            {c.goal.toLocaleString("fr-FR", {
                               style: "currency",
                               currency: "EUR",
                             })}
