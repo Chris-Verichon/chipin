@@ -21,15 +21,15 @@ export default function LoginPage() {
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold tracking-tight">ChipIn</h1>
         <p className="text-muted-foreground mt-1 text-sm">
-          Group fundraising, made simple.
+          Les cagnottes en ligne, en toute simplicité.
         </p>
       </div>
 
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Sign in</CardTitle>
+          <CardTitle>Connexion</CardTitle>
           <CardDescription>
-            Use your Google account to access your creator space.
+            Utilisez votre compte Google pour accéder à votre espace créateur.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -59,7 +59,7 @@ export default function LoginPage() {
                 fill="#EA4335"
               />
             </svg>
-            Continue with Google
+            Continuer avec Google
           </Button>
         </CardContent>
       </Card>

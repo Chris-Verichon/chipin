@@ -43,27 +43,33 @@ export default function Home() {
             {
               icon: <Banknote className="h-6 w-6" />,
               title: "Paiement sécurisé",
-              desc: "Les contributions sont traitées via Stripe — aucune donnée bancaire stockée.",
+              desc: "Les contributions sont traitées via Stripe aucune donnée bancaire stockée.",
               delay: "delay-500",
+              color: "text-emerald-500",
+              bg: "bg-emerald-500/10",
             },
             {
               icon: <Users className="h-6 w-6" />,
               title: "Ouvert à tous",
               desc: "Vos proches peuvent participer sans créer de compte. Juste un lien à partager.",
               delay: "delay-700",
+              color: "text-violet-500",
+              bg: "bg-violet-500/10",
             },
             {
               icon: <Lock className="h-6 w-6" />,
               title: "Privé par défaut",
               desc: "Seul le créateur voit les emails des participants. Les anonymes restent anonymes.",
               delay: "delay-1000",
+              color: "text-orange-500",
+              bg: "bg-orange-500/10",
             },
           ].map((f) => (
             <div
               key={f.title}
-              className={`animate-in fade-in-0 slide-in-from-bottom-4 duration-700 ${f.delay} fill-mode-both rounded-xl border bg-card p-6 space-y-3`}
+              className={`animate-in fade-in-0 slide-in-from-bottom-4 duration-700 ${f.delay} fill-mode-both rounded-2xl border bg-card/50 backdrop-blur-sm p-6 space-y-3 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 text-center flex flex-col items-center`}
             >
-              <div className="text-primary">{f.icon}</div>
+              <div className={`${f.color} ${f.bg} inline-flex p-2.5 rounded-xl`}>{f.icon}</div>
               <h3 className="font-semibold">{f.title}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
             </div>
