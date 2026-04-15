@@ -71,6 +71,12 @@ export default async function CagnotteDetailPage({ params }: Props) {
             <span className="text-sm text-muted-foreground hidden sm:block">
               {session.user.email}
             </span>
+            <Link
+              href="/a-propos"
+              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-semibold transition-colors hover:bg-muted"
+            >
+              À propos
+            </Link>
             <ThemeToggle />
           </div>
         </div>

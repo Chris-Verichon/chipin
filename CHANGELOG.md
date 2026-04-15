@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.0] — Page À propos + Navigation — 2026-04-15
+
+### Added
+- `app/a-propos/page.tsx` — new "À propos" page presenting ChipIn's mission, four feature cards (Rapidité, Paiements sécurisés, Ouverture, Vie privée), and a contact section
+- "À propos" navigation link added to all page headers: home, `/cagnotte/[slug]`, `/cagnotte/[slug]/succes`, `/dashboard`, `/dashboard/cagnotte/[id]`, `/dashboard/guide`, and `/admin`
+
+### Fixed
+- `app/api/stripe/checkout/route.ts` — removed unused `@ts-expect-error` directive (TypeScript lint warning)
+
+### Changed
+- `supabase/schema.sql` — added `stripe_account_id TEXT` column to `users` table to align the reference schema with the v1.1.0 migration
+
+---
+
 ## [1.2.0] — UI Polish + i18n — 2026-04-14
 
 ### Added
