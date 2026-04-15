@@ -3,13 +3,14 @@
 
 -- USERS --------------
 CREATE TABLE users (
-  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  google_id       TEXT UNIQUE NOT NULL,
-  email           TEXT UNIQUE NOT NULL,
-  name            TEXT,
-  avatar_url      TEXT,
-  role            TEXT NOT NULL DEFAULT 'creator' CHECK (role IN ('admin', 'creator')),
-  created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  google_id         TEXT UNIQUE NOT NULL,
+  email             TEXT UNIQUE NOT NULL,
+  name              TEXT,
+  avatar_url        TEXT,
+  role              TEXT NOT NULL DEFAULT 'creator' CHECK (role IN ('admin', 'creator')),
+  stripe_account_id TEXT,
+  created_at        TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- FUNDRAISERS (cagnottes) --------------
