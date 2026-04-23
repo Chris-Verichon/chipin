@@ -12,6 +12,9 @@ export default function Home() {
           <span className="text-xl font-bold tracking-tight">ChipIn</span>
           <div className="flex items-center gap-3">
             <ThemeToggle />
+            <Button render={<Link href="/a-propos" />} nativeButton={false} variant="ghost" size="sm">
+              À propos
+            </Button>
             <Button render={<Link href="/login" />} nativeButton={false} variant="outline" size="sm">
               Se connecter
             </Button>
@@ -76,6 +79,7 @@ export default function Home() {
           ))}
         </section>
       </main>
+
     </div>
   );
 }

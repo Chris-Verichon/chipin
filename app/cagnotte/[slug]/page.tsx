@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -86,7 +87,12 @@ export default async function CagnottePage({ params }: Props) {
           <a href="/" className="text-xl font-bold tracking-tight">
             ChipIn
           </a>
-          <ThemeToggle />
+          <div className="flex items-center gap-3">
+            <Link href="/a-propos" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              À propos
+            </Link>
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 

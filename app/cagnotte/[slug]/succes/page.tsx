@@ -22,7 +22,12 @@ export default async function SuccesPage({ params }: Props) {
           <Link href="/" className="text-xl font-bold tracking-tight">
             ChipIn
           </Link>
-          <ThemeToggle />
+          <div className="flex items-center gap-3">
+            <Link href="/a-propos" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              À propos
+            </Link>
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 

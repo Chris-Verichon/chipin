@@ -28,7 +28,7 @@ export default async function DashboardPage({
 
   const params = await searchParams;
   const creationStatus = params.creation; // "success" | "cancelled" | undefined
-  const connectStatus = params.connect;   // "success" | "cancelled" | "error" | undefined
+  const connectStatus = params.connect;   // "success" | "cancelled" | "error" | "missing" | undefined
 
   // Fetch Stripe Connect status
   const { data: userData } = await supabase
@@ -90,6 +90,12 @@ export default async function DashboardPage({
             >
               Guide
             </Link>
+            <Link
+              href="/a-propos"
+              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-semibold transition-colors hover:bg-muted"
+            >
+              À propos
+            </Link>
             <ThemeToggle />
             <SignOutButton />
           </div>
@@ -116,6 +122,11 @@ export default async function DashboardPage({
             Une erreur s&apos;est produite lors de la connexion Stripe. Veuillez réessayer.
           </div>
         )}
+        {connectStatus === "missing" && (
+          <div className="rounded-lg border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800 px-4 py-3 text-sm text-yellow-800 dark:text-yellow-300">
+            Votre compte Stripe n&apos;est pas encore connecté. Veuillez d&apos;abord lier votre compte.
+          </div>
+        )}
 
         {/* Stripe Connect CTA — only for creators who haven't linked their account */}
         {session.user.role === "creator" && !stripeAccountId && (
@@ -135,9 +146,17 @@ export default async function DashboardPage({
           </div>
         )}
         {session.user.role === "creator" && stripeAccountId && (
-          <div className="rounded-lg border border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800 px-5 py-3 flex items-center gap-2 text-sm text-green-800 dark:text-green-300">
-            <span>✓</span>
-            <span>Compte Stripe connecté — les contributions sont versées directement sur votre compte.</span>
+          <div className="rounded-lg border border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800 px-5 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm text-green-800 dark:text-green-300">
+            <div className="flex items-center gap-2">
+              <span>✓</span>
+              <span>Compte Stripe connecté — les contributions sont versées directement sur votre compte.</span>
+            </div>
+            <a
+              href="/api/stripe/dashboard-link"
+              className="shrink-0 inline-flex items-center justify-center rounded-md border border-green-300 dark:border-green-700 bg-white dark:bg-green-900/40 px-3 py-1.5 text-xs font-medium text-green-900 dark:text-green-200 hover:bg-green-100 dark:hover:bg-green-900/60 transition-colors"
+            >
+              Retirer mes fonds →
+            </a>
           </div>
         )}
 
@@ -178,7 +197,7 @@ export default async function DashboardPage({
               Gérez vos collectes et suivez les participations.
             </p>
           </div>
-          <CagnotteForm role={session.user.role} />
+          <CagnotteForm role={session.user.role} stripeConnected={!!stripeAccountId} />
         </div>
 
         <Separator />
