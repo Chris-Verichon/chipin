@@ -23,11 +23,14 @@ export async function GET() {
 
   let stripeAccountId = userData?.stripe_account_id ?? null;
 
-  // Create a new Standard connected account if none exists
+  // Create a new Express connected account if none exists
   if (!stripeAccountId) {
     const account = await stripe.accounts.create({
-      type: "standard",
+      type: "express",
       email: session.user.email ?? undefined,
+      capabilities: {
+        transfers: { requested: true },
+      },
     });
 
     stripeAccountId = account.id;
