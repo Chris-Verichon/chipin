@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.4.0] — Integrated Stripe flow + Fund withdrawal — 2026-04-15
+
+### Added
+- `app/api/stripe/dashboard-link/route.ts` — generates a one-time Stripe Express dashboard login link so creators can manage payouts and withdraw funds directly from ChipIn
+- **"Retirer mes fonds"** button in the dashboard Stripe-connected banner, linking to the Express dashboard
+- `connect=missing` query-param banner on the dashboard for edge-case redirects
+
+### Changed
+- `app/api/stripe/connect/route.ts` — switched account creation from `type: "standard"` to `type: "express"` (enables programmatic login links and a controlled payout experience)
+- `components/CagnotteForm.tsx` — now accepts a `stripeConnected` boolean prop; when Stripe is not linked, the "Nouvelle cagnotte" dialog shows a guided **Step 0** (connect Stripe first) instead of the form, eliminating the dead-end where creators could try to create a cagnotte without a payout account
+- `app/dashboard/page.tsx` — passes `stripeConnected` to `CagnotteForm`; Stripe-connected banner is now a flex row with the "Retirer mes fonds" action; handles `connect=missing` status
+
+---
+
 ## [1.3.0] — Page À propos + Navigation — 2026-04-15
 
 ### Added
