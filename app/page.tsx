@@ -3,9 +3,28 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ArrowRight, Banknote, Lock, Users } from "lucide-react";
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "ChipIn",
+  description:
+    "ChipIn permet de créer une cagnotte en ligne en quelques secondes. Partagez un lien, vos proches participent sans compte. Paiement sécurisé via Stripe.",
+  applicationCategory: "FinanceApplication",
+  inLanguage: "fr",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "EUR",
+  },
+};
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Header */}
       <header className="border-b">
         <div className="mx-auto max-w-5xl flex items-center justify-between px-4 py-4">
