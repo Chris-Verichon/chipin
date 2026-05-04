@@ -13,10 +13,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.5.0] — SEO & metadata — 2026-05-04
+
+### Added
+- `app/robots.ts` — génère `/robots.txt` via Next.js : autorise `/` et `/a-propos`, bloque `/dashboard`, `/admin`, `/api`, `/login`, `/cagnotte`
+- `app/sitemap.ts` — génère `/sitemap.xml` avec les deux pages publiques (`/` et `/a-propos`)
+- `docs_skipped/image.md` — template JSX pour générer l'image Open Graph via og-playground.vercel.app
+
+### Changed
+- `app/layout.tsx` — metadata enrichie : `metadataBase`, title template (`%s | ChipIn`), description en français, keywords, Open Graph complet, Twitter Card, et directive robots explicite
+- `app/a-propos/page.tsx` — ajout d'un export `metadata` dédié (title + description + openGraph)
+- `app/page.tsx` — ajout d'un bloc JSON-LD `WebApplication` (schema.org) pour aider Google à comprendre l'app
+
+---
+
 ## [1.4.0] — Integrated Stripe flow + Fund withdrawal — 2026-04-15
 
 ### Added
-- `app/api/stripe/dashboard-link/route.ts` — generates a one-time Stripe Express dashboard login link so creators can manage payouts and withdraw funds directly from ChipIn
+- `app/api/stripe/dashboard-link/route.ts` generates a one-time Stripe Express dashboard login link so creators can manage payouts and withdraw funds directly from ChipIn
 - **"Retirer mes fonds"** button in the dashboard Stripe-connected banner, linking to the Express dashboard
 - `connect=missing` query-param banner on the dashboard for edge-case redirects
 
@@ -240,7 +254,7 @@ First stable release of ChipIn. All features complete, accessibility audited, ad
 
 ### Added
 - Next.js 14 with TypeScript, Tailwind CSS, App Router
-- Dependencies: `@supabase/supabase-js`, `stripe`, `@stripe/stripe-js`, `next-auth`, `resend`, `next-themes`, `recharts`
+- Dependencies: `@supabase/supabase-js`, `stripe`, `@stripe/stripe-js`, `next-auth`, `next-themes`, `recharts`
 - `.env.local.example` template with all required variables
 - `next.config.ts` configured with Google avatar image domain
 - Professional `README.md` with full setup instructions
