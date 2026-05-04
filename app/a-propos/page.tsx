@@ -1,7 +1,20 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Mail, ArrowLeft, Banknote, Users, Lock, Zap } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "À propos",
+  description:
+    "Découvrez ChipIn, l'application de cagnottes en ligne simple et rapide. Créez une cagnotte en quelques secondes, partagez un lien, et laissez vos proches contribuer sans créer de compte.",
+  openGraph: {
+    title: "À propos de ChipIn",
+    description:
+      "Découvrez ChipIn, l'application de cagnottes en ligne simple et rapide. Créez une cagnotte, partagez un lien.",
+    url: "/a-propos",
+  },
+};
 
 export default function APropos() {
   return (

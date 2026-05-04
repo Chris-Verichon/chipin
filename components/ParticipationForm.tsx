@@ -114,7 +114,7 @@ export default function ParticipationForm({ cagnotteId, cagnotteTitle }: Props) 
             min={1}
             step={1}
             disabled={loading}
-            className="w-32"
+            className="w-36"
           />
         </div>
       </div>
