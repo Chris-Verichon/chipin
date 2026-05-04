@@ -34,7 +34,6 @@
 - **[Tailwind CSS](https://tailwindcss.com)** — Utility-first styling
 - **[next-themes](https://github.com/pacocoursey/next-themes)** — Dark mode
 - **[Recharts](https://recharts.org)** — Admin dashboard charts
-- **[Resend](https://resend.com)** — Transactional emails
 
 ---
 
