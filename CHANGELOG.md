@@ -13,6 +13,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.7.0] — Open Graph previews — 2026-05-05
+
+### Added
+- `app/cagnotte/[slug]/opengraph-image.tsx` — dynamic OG image (1200×630) generated per fundraiser via Next.js `ImageResponse`; displays the fundraiser title, description, and amount raised
+- `public/OG.png` — static fallback OG image used for all global pages (home, about, login)
+
+### Changed
+- `app/layout.tsx` — added `openGraph.images` and `twitter.images` pointing to `/OG.png` as the global fallback
+- `app/cagnotte/[slug]/page.tsx` — upgraded `twitter.card` from `"summary"` to `"summary_large_image"` to enable rich previews on X/Twitter
+
+---
+
 ## [1.6.0] — Legal pages — 2026-05-05
 
 ### Added
