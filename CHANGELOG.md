@@ -13,38 +13,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.6.0] — Legal pages — 2026-05-05
+
+### Added
+- `components/AProposTabs.tsx` — client component with 4 tabs embedded in the `/a-propos` page: **About**, **Legal notice**, **Privacy policy (GDPR)**, **Terms of Service**
+- `components/ui/tabs.tsx` — shadcn/ui Tabs component installed
+
+### Changed
+- `app/a-propos/page.tsx` — page restructured around the `AProposTabs` component; inline content replaced by tabbed layout
+- Legal notice (LCEN art. 6 III), privacy policy (GDPR) and Terms of Service are now all accessible from a single URL (`/a-propos`)
+- Unified typography across all tabs (`text-3xl` headings, `text-base` body text)
+- Per-tab color accents: indigo (legal notice), violet (privacy), emerald (terms)
+
+---
+
 ## [1.5.0] — SEO & metadata — 2026-05-04
 
 ### Added
-- `app/robots.ts` — génère `/robots.txt` via Next.js : autorise `/` et `/a-propos`, bloque `/dashboard`, `/admin`, `/api`, `/login`, `/cagnotte`
-- `app/sitemap.ts` — génère `/sitemap.xml` avec les deux pages publiques (`/` et `/a-propos`)
-- `docs_skipped/image.md` — template JSX pour générer l'image Open Graph via og-playground.vercel.app
+- `app/robots.ts` — generates `/robots.txt` via Next.js: allows `/` and `/a-propos`, blocks `/dashboard`, `/admin`, `/api`, `/login`, `/cagnotte`
+- `app/sitemap.ts` — generates `/sitemap.xml` with the two public pages (`/` and `/a-propos`)
+- `docs_skipped/image.md` — JSX template to generate the Open Graph image via og-playground.vercel.app
 
 ### Changed
-- `app/layout.tsx` — metadata enrichie : `metadataBase`, title template (`%s | ChipIn`), description en français, keywords, Open Graph complet, Twitter Card, et directive robots explicite
-- `app/a-propos/page.tsx` — ajout d'un export `metadata` dédié (title + description + openGraph)
-- `app/page.tsx` — ajout d'un bloc JSON-LD `WebApplication` (schema.org) pour aider Google à comprendre l'app
+- `app/layout.tsx` — enriched metadata: `metadataBase`, title template (`%s | ChipIn`), French description, keywords, full Open Graph, Twitter Card, explicit robots directive
+- `app/a-propos/page.tsx` — added dedicated `metadata` export (title + description + openGraph)
+- `app/page.tsx` — added `WebApplication` JSON-LD block (schema.org) to help Google understand the app
 
 ---
 
 ## [1.4.0] — Integrated Stripe flow + Fund withdrawal — 2026-04-15
 
 ### Added
-- `app/api/stripe/dashboard-link/route.ts` generates a one-time Stripe Express dashboard login link so creators can manage payouts and withdraw funds directly from ChipIn
+- `app/api/stripe/dashboard-link/route.ts` — generates a one-time Stripe Express dashboard login link so creators can manage payouts and withdraw funds directly from ChipIn
 - **"Retirer mes fonds"** button in the dashboard Stripe-connected banner, linking to the Express dashboard
 - `connect=missing` query-param banner on the dashboard for edge-case redirects
 
 ### Changed
 - `app/api/stripe/connect/route.ts` — switched account creation from `type: "standard"` to `type: "express"` (enables programmatic login links and a controlled payout experience)
-- `components/CagnotteForm.tsx` — now accepts a `stripeConnected` boolean prop; when Stripe is not linked, the "Nouvelle cagnotte" dialog shows a guided **Step 0** (connect Stripe first) instead of the form, eliminating the dead-end where creators could try to create a cagnotte without a payout account
-- `app/dashboard/page.tsx` — passes `stripeConnected` to `CagnotteForm`; Stripe-connected banner is now a flex row with the "Retirer mes fonds" action; handles `connect=missing` status
+- `components/CagnotteForm.tsx` — now accepts a `stripeConnected` boolean prop; when Stripe is not linked, the "Nouvelle cagnotte" dialog shows a guided **Step 0** (connect Stripe first) instead of the form, eliminating the dead-end where creators could try to create a fundraiser without a payout account
+- `app/dashboard/page.tsx` — passes `stripeConnected` to `CagnotteForm`; Stripe-connected banner is now a flex row with the withdraw action; handles `connect=missing` status
 
 ---
 
-## [1.3.0] — Page À propos + Navigation — 2026-04-15
+## [1.3.0] — About page + Navigation — 2026-04-15
 
 ### Added
-- `app/a-propos/page.tsx` — new "À propos" page presenting ChipIn's mission, four feature cards (Rapidité, Paiements sécurisés, Ouverture, Vie privée), and a contact section
+- `app/a-propos/page.tsx` — new "About" page presenting ChipIn's mission, four feature cards (Speed, Secure payments, Openness, Privacy), and a contact section
 - "À propos" navigation link added to all page headers: home, `/cagnotte/[slug]`, `/cagnotte/[slug]/succes`, `/dashboard`, `/dashboard/cagnotte/[id]`, `/dashboard/guide`, and `/admin`
 
 ### Fixed
@@ -63,7 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Glassmorphism (`backdrop-blur-sm`, `bg-card/50`) on feature cards
 
 ### Changed
-- **Login page** — fully translated to French ("Connexion", "Continuer avec Google", etc.)
+- **Login page** — fully translated to French
 - Feature cards layout centered (icon, title, description aligned center)
 - Cards use `rounded-2xl` for softer appearance
 
@@ -87,8 +101,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Webhook idempotency** — duplicate key errors (`23505`) silently ignored on `participations` and `cagnottes` inserts to handle Stripe retries
 - **Webhook** — added `payment_status !== "paid"` guard on contribution handling
 - `app/cagnotte/[slug]/page.tsx` — fixed `p.amount / 100` bug (amount stored in euros); total raised turns `text-green-700` when > 0
-- `app/cagnotte/[slug]/succes/page.tsx` — heading changed to "Merci pour votre participation"
-- `app/dashboard/page.tsx` — Stripe Connect banners; "Connecter Stripe" CTA; active badge green/white; stats grid responsive below 430px
+- `app/cagnotte/[slug]/succes/page.tsx` — success heading updated
+- `app/dashboard/page.tsx` — Stripe Connect banners; connect Stripe CTA; active badge green/white; stats grid responsive below 430px
 - `lib/database.types.ts` — added `stripe_account_id` to `users` types
 
 ### Fixed
@@ -112,7 +126,7 @@ First stable release of ChipIn. All features complete, accessibility audited, ad
 
 ---
 
-## [0.10.0] — UI Polish + Accessibilité + Animations + Admin Monitoring — 2026-04-04
+## [0.10.0] — UI Polish + Accessibility + Animations + Admin Monitoring — 2026-04-04
 
 ### Added
 - `components/SignOutButton.tsx` — client component with `signOut({ callbackUrl: "/" })` from next-auth/react
@@ -124,10 +138,10 @@ First stable release of ChipIn. All features complete, accessibility audited, ad
 - `lib/database.types.ts` — added `login_events` table type
 
 ### Updated
-- `app/layout.tsx` — added skip link ("Passer au contenu principal") for keyboard navigation (WCAG 2.4.1)
+- `app/layout.tsx` — added skip link for keyboard navigation (WCAG 2.4.1)
 - `app/page.tsx` — `id="main-content"`; landing hero + feature cards now animate in with `animate-in fade-in-0 slide-in-from-bottom` and staggered delays (tw-animate-css)
 - `app/dashboard/page.tsx` — added sign out button in header; `id="main-content"`; `role="progressbar"` + `aria-value*` on progress bars
-- `app/admin/page.tsx` — added sign out button in header; `id="main-content"`; `scope="col"` on `<th>`; `overflow-x-auto` on tables; new "Ce mois-ci" KPI row (revenus mois + année, nouveaux inscrits, cagnottes créées, taux de conversion, connexions totales + uniques); user growth AreaChart side-by-side with contributions chart
+- `app/admin/page.tsx` — added sign out button in header; `id="main-content"`; `scope="col"` on `<th>`; `overflow-x-auto` on tables; new "This month" KPI row (monthly + yearly revenue, new users, fundraisers created, conversion rate, total + unique logins); user growth AreaChart side-by-side with contributions chart
 - `app/cagnotte/[slug]/page.tsx` — Open Graph + Twitter card meta tags; `id="main-content"`; `role="progressbar"` on progress bar
 - `app/cagnotte/[slug]/succes/page.tsx` — `id="main-content"` on `<main>`
 - `app/dashboard/cagnotte/[id]/page.tsx` — `id="main-content"`; `role="progressbar"`; `scope="col"` on `<th>`; `overflow-x-auto` on table
@@ -142,7 +156,7 @@ First stable release of ChipIn. All features complete, accessibility audited, ad
 ## [0.9.0] — Admin Dashboard — 2026-04-04
 
 ### Added
-- `app/admin/page.tsx` — full admin dashboard: KPI cards (users, cagnottes, contributions, fee revenue), area chart (contributions/30 days), top fundraisers table, recent users table
+- `app/admin/page.tsx` — full admin dashboard: KPI cards (users, fundraisers, contributions, fee revenue), area chart (contributions/30 days), top fundraisers table, recent users table
 - `components/AdminCharts.tsx` — Recharts `AreaChart` with CSS variable theming (dark mode compatible)
 - `app/api/admin/users/[id]/role/route.ts` — PATCH endpoint to promote/demote users (admin only, cannot demote self)
 
@@ -154,17 +168,17 @@ First stable release of ChipIn. All features complete, accessibility audited, ad
 ## [0.8.0] — Creator Dashboard — 2026-04-04
 
 ### Added
-- `app/dashboard/cagnotte/[id]/page.tsx` — per-cagnotte management page: stats, full participants table (with emails), close/reopen toggle, copy public link
+- `app/dashboard/cagnotte/[id]/page.tsx` — per-fundraiser management page: stats, full participants table (with emails), close/reopen toggle, copy public link
 - `app/api/cagnotte/[id]/toggle/route.ts` — PATCH endpoint to toggle `is_active` (owner or admin only)
 - `components/ToggleActiveButton.tsx` — client button to close/reopen a fundraiser
 - `components/CopyLinkButton.tsx` — client button to copy the public link to clipboard
 
 ### Updated
-- `app/dashboard/page.tsx` — added global stats bar (total raised, total contributions, active cagnottes) + "Gérer" link per card
+- `app/dashboard/page.tsx` — added global stats bar (total raised, total contributions, active fundraisers) + manage link per card
 
 ---
 
-## [0.7.0] — Public Cagnotte Page — 2026-04-04
+## [0.7.0] — Public Fundraiser Page — 2026-04-04
 
 ### Added
 - `app/cagnotte/[slug]/page.tsx` — public fundraiser page: title, progress bar, participants list, contribution form
@@ -176,11 +190,11 @@ First stable release of ChipIn. All features complete, accessibility audited, ad
 
 ---
 
-## [0.6.0] — Cagnotte Creation — 2026-04-04
+## [0.6.0] — Fundraiser Creation — 2026-04-04
 
 ### Added
-- `components/CagnotteForm.tsx` — shadcn Dialog modal with title, description, goal + “Créer (4,99 €)” button
-- `components/CreationBanner.tsx` — success/cancelled banner dismisses after 5 s and clears query params
+- `components/CagnotteForm.tsx` — shadcn Dialog modal with title, description, goal + create button (€4.99)
+- `components/CreationBanner.tsx` — success/cancelled banner dismisses after 5 s and clears query params
 - `app/dashboard/page.tsx` — creator dashboard listing all fundraisers with progress bars
 - `total_raised INTEGER` column added to `cagnottes` table (stores cents)
 - `increment_total_raised` PostgreSQL RPC function for atomic counter increment
