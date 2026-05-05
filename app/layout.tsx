@@ -19,7 +19,7 @@ const baseUrl = process.env.NEXTAUTH_URL ?? "https://chipin-bice.vercel.app/";
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: "ChipIn — Créez votre cagnotte en ligne facilement",
+    default: "ChipIn - Créez votre cagnotte en ligne facilement",
     template: "%s | ChipIn",
   },
   description:
@@ -40,16 +40,18 @@ export const metadata: Metadata = {
     type: "website",
     locale: "fr_FR",
     siteName: "ChipIn",
-    title: "ChipIn — Créez votre cagnotte en ligne facilement",
+    title: "ChipIn - Créez votre cagnotte en ligne facilement",
     description:
       "ChipIn permet de créer une cagnotte en ligne en quelques secondes. Partagez un lien, vos proches participent sans compte.",
     url: "/",
+    images: ["/OG.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "ChipIn — Créez votre cagnotte en ligne facilement",
+    title: "ChipIn - Créez votre cagnotte en ligne facilement",
     description:
       "ChipIn permet de créer une cagnotte en ligne en quelques secondes. Partagez un lien, vos proches participent sans compte.",
+    images: ["/OG.png"],
   },
   robots: {
     index: true,
