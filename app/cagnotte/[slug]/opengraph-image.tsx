@@ -46,20 +46,7 @@ export default async function OgImage({ params }: Props) {
             marginBottom: "48px",
           }}
         >
-          <div
-            style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "10px",
-              backgroundColor: "#6366f1",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <span style={{ color: "white", fontSize: "22px", fontWeight: "bold" }}>C</span>
-          </div>
-          <span style={{ color: "#a1a1aa", fontSize: "22px", fontWeight: "600" }}>ChipIn</span>
+          <span style={{ color: "#a1a1aa", fontSize: "24px", fontWeight: "600" }}>ChipIn</span>
         </div>
 
         {/* Content */}
@@ -99,13 +86,14 @@ export default async function OgImage({ params }: Props) {
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <div
               style={{
-                backgroundColor: "#166534",
+                backgroundColor: "transparent",
+                border: "2px solid #22c55e",
                 borderRadius: "999px",
                 padding: "8px 20px",
                 display: "flex",
               }}
             >
-              <span style={{ color: "#86efac", fontSize: "20px", fontWeight: "600" }}>
+              <span style={{ color: "#22c55e", fontSize: "20px", fontWeight: "600" }}>
                 {raised} € collectés{goal ? ` / ${goal} €` : ""}
               </span>
             </div>
